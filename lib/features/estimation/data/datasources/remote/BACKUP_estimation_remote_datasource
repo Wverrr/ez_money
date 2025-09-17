@@ -1,0 +1,49 @@
+// import 'dart:convert';
+
+// import 'package:http/http.dart' as http;
+
+// import '../../models/train_record_model.dart';
+
+// abstract class EstimationRemoteDatasource2 {
+//   Future<EstimationResultModel> getEstimation();
+// }
+
+// class EstimationRemoteDatasourceImpl implements EstimationRemoteDatasource {
+//   final http.Client client;
+
+//   EstimationRemoteDatasourceImpl(this.client);
+
+//   @override
+//   Future<EstimationResultModel> getEstimation() async {
+//     // final url = Uri.parse("http://127.0.0.1:8000/predictions/monthly_expense");
+//     // final url = Uri.parse("http://pyhost.nzroot.com/predict");
+//     final url = Uri.parse("http://10.0.2.2:8000/predictions/monthly_expense");
+
+//   final response = await client.get(url);
+
+//     // final response = await client.post(
+//     //   url,
+//     //   headers: {'Content-Type': 'application/json'},
+//     //   // body: jsonEncode({
+//     //   //   "makan": 1000000,
+//     //   //   "hiburan": 800000,
+//     //   //   "transportasi": 120000,
+//     //   //   "pendidikan": 800000,
+//     //   //   "kesehatan": 25000,
+//     //   //   "gaji": 2000000,
+//     //   //   "uang_jajan": 800000,
+//     //   //   "beasiswa": 100000,
+//     //   // }),
+//     // );
+
+
+
+//     if (response.statusCode == 200) {
+//       print("Response: ${response.body}");
+//       return EstimationResultModel.fromJson(jsonDecode(response.body));
+//     } else {
+//       print("Failed to get estimation: ${response.statusCode}");
+//       throw Exception("Failed to get estimation");
+//     }
+//   }
+// }

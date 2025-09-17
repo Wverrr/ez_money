@@ -1,0 +1,12 @@
+
+flutter_native_splash:
+
+  color: "#0xFFF0F0F0"
+
+
+  image: assets/images/onboarding3.jpg
+
+  android_12:
+    image: assets/images/onboarding3.jpg
+    color: "#0xFFF0F0F0"
+
