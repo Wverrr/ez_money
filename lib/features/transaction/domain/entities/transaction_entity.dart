@@ -4,7 +4,7 @@ import '../../../category/domain/entities/category_entity.dart';
 import '../../../user/domain/entities/user_entity.dart';
 
 class TransactionEntity extends Equatable {
-  final int id;
+  final int? id;
   final int userId;
   final int? categoryId;
   final int? savingsId;
@@ -24,7 +24,7 @@ class TransactionEntity extends Equatable {
 
 
   const TransactionEntity({
-    required this.id,
+    this.id,
     required this.userId,
     this.categoryId,
     this.savingsId,

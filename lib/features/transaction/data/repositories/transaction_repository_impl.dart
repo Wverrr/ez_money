@@ -12,7 +12,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
   TransactionRepositoryImpl(this.localDataSource);
 
   @override
-  Future<Either<Failure, List<TransactionEntity>>> getAllTransactions() async {
+  Future<Either<Failure, List<TransactionEntity>>> getAllTransactions(int year, int month, String searchQuery) async {
     try {
       final result = await localDataSource.getAllTransactions();
       final entities = result.map((model) => model.toEntity()).toList();

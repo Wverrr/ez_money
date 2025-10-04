@@ -7,7 +7,15 @@ import '../repositories/transaction_repository.dart';
 class GetAllTransactions {
   final TransactionRepository transactionRepository;
   GetAllTransactions(this.transactionRepository);
-  Future<Either<Failure, List<TransactionEntity>>> execute() async {
-    return await transactionRepository.getAllTransactions();
+  Future<Either<Failure, List<TransactionEntity>>> execute(
+    int year,
+    int month,
+    String searchQuery,
+  ) async {
+    return await transactionRepository.getAllTransactions(
+      year,
+      month,
+      searchQuery,
+    );
   }
 }

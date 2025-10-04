@@ -4,12 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../bloc/home_bloc.dart';
 
-// container biru untuk background
-// Container(
-//           width: double.infinity,
-//           height: 150,
-//           color: AppColors.primary,
-//         ),
+
 
 class BalanceHeader extends StatelessWidget {
   const BalanceHeader({super.key});
@@ -48,7 +43,7 @@ class BalanceHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                "Rp. $main, 1231231323",
+                "Rp. $main,",
                 style: const TextStyle(
                   fontSize: 32,
                   color: AppColors.surface,

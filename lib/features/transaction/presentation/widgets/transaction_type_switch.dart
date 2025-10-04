@@ -1,46 +1,43 @@
-
 import 'package:flutter/material.dart';
 import '../../../category/presentation/bloc/category_bloc.dart';
 import '../bloc/transaction_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../core/constants/app_colors.dart';
 
 class TransactionTypeSwitch extends StatefulWidget {
-  const TransactionTypeSwitch({super.key});
+  final Function(int) onTypeChanged;
+
+  const TransactionTypeSwitch({super.key, required this.onTypeChanged});
 
   @override
   State<TransactionTypeSwitch> createState() => _TransactionTypeSwitchState();
 }
 
 class _TransactionTypeSwitchState extends State<TransactionTypeSwitch> {
-  TransactionType _selectedType = TransactionType.pemasukan;
+  int _selectedTypeIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    final types = {
-      TransactionType.pemasukan: 'Pemasukan',
-      TransactionType.pengeluaran: 'Pengeluaran',
-      TransactionType.tabungan: 'Tabungan',
-      TransactionType.hutang: 'Hutang',
-    };
+    final types = ['Pemasukan', 'Pengeluaran', 'Tabungan', 'Hutang'];
 
     return Wrap(
       spacing: 8,
-      children: types.entries.map((entry) {
-        final type = entry.key;
-        final label = entry.value;
-        final isSelected = _selectedType == type;
+      children: List.generate(types.length, (index) {
+        final isSelected = _selectedTypeIndex == index;
 
         return ChoiceChip(
-          label: Text(label),
+          label: Text(types[index]),
           selected: isSelected,
           onSelected: (_) {
             setState(() {
-              _selectedType = type;
+              _selectedTypeIndex = index;
             });
-            context.read<TransactionBloc>().add(ChangeTransactionTypeEvent(_selectedType));
-            context.read<CategoryBloc>().add(GetCategoriesByTypeEvent(_selectedType.index + 1));
+
+            widget.onTypeChanged(index + 1);
+
+            context.read<CategoryBloc>().add(
+              GetCategoriesByTypeEvent(index + 1),
+            );
           },
           selectedColor: AppColors.primary,
           labelStyle: TextStyle(
@@ -49,7 +46,7 @@ class _TransactionTypeSwitchState extends State<TransactionTypeSwitch> {
           ),
           backgroundColor: AppColors.primary.withOpacity(0.1),
         );
-      }).toList(),
+      }),
     );
   }
 }

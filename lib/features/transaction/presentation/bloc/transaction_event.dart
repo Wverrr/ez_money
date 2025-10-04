@@ -8,12 +8,18 @@ abstract class TransactionEvent extends Equatable {
 }
 
 class GetAllTransactionsEvent extends TransactionEvent {
-  // final int userId;
+  final int? year;
+  final int? month;
+  final String? searchQuery;
 
-  const GetAllTransactionsEvent();
+  const GetAllTransactionsEvent({
+    this.year,
+    this.month,
+    this.searchQuery,
+  });
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [year ?? 0, month ?? 0, searchQuery ?? ''];
 }
 
 class GetTransactionEvent extends TransactionEvent {

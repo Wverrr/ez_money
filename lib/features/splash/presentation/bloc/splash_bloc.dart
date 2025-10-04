@@ -20,19 +20,18 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     Emitter<SplashState> emit,
   ) async {
 
-    // Insert default categories
     await insertDefaultCategory.execute();
 
     // emit(SplashGoToHome());
     
     final isFirstRun = sharedPreferences.getBool('isFirstRun') ?? true;
-
+    final lastActiveUser = sharedPreferences.getInt('last_active_user');
 
     if (isFirstRun) {
-      sharedPreferences.setBool('isFirstRun', false);
       emit(SplashGoToOnboarding());
     } else {
-      emit(SplashGoToHome());
+      emit(SplashGoToHome(lastActiveUser ?? 1));
+      // sharedPreferences.setInt('last_active_user', 1);
       // emit(SplashGoToOnboarding());
     }
 

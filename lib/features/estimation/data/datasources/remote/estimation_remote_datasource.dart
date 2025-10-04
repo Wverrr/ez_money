@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
@@ -21,56 +20,49 @@ class EstimationRemoteDataSourceImpl implements EstimationRemoteDataSource {
 
   @override
   Future<TrainResponseEntity> train(TrainRequestModel request) async {
-    final resp = await httpClient.post(
-      Uri.parse('$baseUrl/train'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(request.toJson()),
-    );
-    log(request.data.toString());
-    log('Response: ${resp.body}');
-    log('Status Code: ${resp.statusCode}');
-    log(resp.toString());
+    final uri = Uri.parse('$baseUrl/train');
+    try {
+      final response = await httpClient.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(request.toJson()),
+      );
 
-    if (resp.statusCode != 200) {
-      log('Connection test failed: ');
-      throw ServerException('Train failed', statusCode: resp.statusCode);
+      if (response.statusCode == 200) {
+        return TrainResponseModel.fromJson(jsonDecode(response.body));
+      } else {
+        throw ServerException(
+          'Gagal melatih model',
+          statusCode: response.statusCode,
+        );
+      }
+    } catch (e) {
+      throw ServerException('Tidak dapat terhubung ke server');
     }
-
-    print('Connection test failed: 2');
-    log('Response body: ${resp.body}');
-    return TrainResponseEntity(
-      message: 'Train successful',
-      userId: request.userId,
-      r2Score: 0.95,
-      analysis: resp.body.isNotEmpty
-          ? jsonDecode(resp.body) as Map<String, dynamic>
-          : {},
-    );
   }
 
   @override
   Future<EstimationResponseModel> estimate(
     EstimationRequestModel request,
   ) async {
-    final resp = await httpClient.post(
-      Uri.parse('$baseUrl/estimate'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(request.toJson()),
-    );
-
-    if (resp.statusCode == 200) {
-      final data = jsonDecode(resp.body) as Map<String, dynamic>;
-      final v = data['estimated_expense'];
-      if (v == null) {
-        throw ServerException('Missing prediction value', statusCode: resp.statusCode);
-      }
-      return EstimationResponseModel(
-        estimatedExpense: (v as num).toDouble(),
-        userId: request.userId,
-        analysis: {},
+    final uri = Uri.parse('$baseUrl/estimate');
+    try {
+      final response = await httpClient.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(request.toJson()),
       );
-    }
 
-    throw ServerException('Estimate failed', statusCode: resp.statusCode);
+      if (response.statusCode == 200) {
+        return EstimationResponseModel.fromJson(jsonDecode(response.body));
+      } else {
+        throw ServerException(
+          'Gagal melakukan estimasi',
+          statusCode: response.statusCode,
+        );
+      }
+    } catch (e) {
+      throw ServerException('Tidak dapat terhubung ke server');
+    }
   }
 }

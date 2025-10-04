@@ -2,45 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/presentation/bloc/category_bloc.dart';
 
-class CategoryDropdown extends StatefulWidget {
-  const CategoryDropdown({super.key});
+class CategoryDropdown extends StatelessWidget {
 
-  @override
-  State<CategoryDropdown> createState() => _CategoryDropdownState();
-}
+  final CategoryEntity? value;
+  final Function(CategoryEntity?) onChanged;
 
-class _CategoryDropdownState extends State<CategoryDropdown> {
-  String? selectedCategory;
+  const CategoryDropdown({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Kategori',
-          style: TextStyle(
-            color: AppColors.primary,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-
-        // BlocBuilder untuk ambil kategori dari CategoryBloc
         BlocBuilder<CategoryBloc, CategoryState>(
           builder: (context, state) {
             if (state is CategoryLoading) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state is CategoryLoaded) {
-              final categories = state.categories;
-
-              // kalau belum ada data
-              if (categories.isEmpty) {
+            }
+            if (state is CategoryLoaded) {
+              if (state.categories.isEmpty) {
                 return const Text("Tidak ada kategori tersedia");
               }
-
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
@@ -49,37 +43,23 @@ class _CategoryDropdownState extends State<CategoryDropdown> {
                   border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
+                  child: DropdownButton<CategoryEntity>(
                     isExpanded: true,
-                    value: selectedCategory,
+
+                    value: value,
                     hint: const Text("Pilih kategori"),
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: AppColors.primary,
-                    ),
-                    items: categories
-                        .map(
-                          (category) => DropdownMenuItem<String>(
-                            value: category.name,
-                            child: Text(
-                              category.name,
-                              style: TextStyle(color: AppColors.textPrimary),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedCategory = value;
-                      });
-                    },
+                    icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primary),
+                    items: state.categories.map((category) {
+                      return DropdownMenuItem<CategoryEntity>(
+                        value: category,
+                        child: Text(category.name, style: const TextStyle(color: AppColors.textPrimary)),
+                      );
+                    }).toList(),
+                    onChanged: onChanged,
                   ),
                 ),
               );
-            } else if (state is CategoryLoadError) {
-              return Text("Error: ${state.message}");
             }
-
             return const SizedBox.shrink();
           },
         ),

@@ -156,7 +156,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
   @override
   Future<void> updateTransaction(TransactionModel transaction) async {
     await (database.update(database.transactions)..where(
-      (tbl) => tbl.id.equals(transaction.id),
+      (tbl) => tbl.id.equals(transaction.id!),
     )).write(transaction.toCompanion());
   }
 

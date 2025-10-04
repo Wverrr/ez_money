@@ -11,6 +11,7 @@ import '../../domain/usecases/update_transaction.dart';
 part 'transaction_event.dart';
 part 'transaction_state.dart';
 
+
 enum TransactionType { pemasukan, pengeluaran, tabungan, hutang }
 
 class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
@@ -20,6 +21,10 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   final UpdateTransaction updateTransaction;
   final DeleteTransaction deleteTransaction;
 
+  int _currentYear = DateTime.now().year;
+  int _currentMonth = DateTime.now().month;
+  String _currentSearchQuery = '';
+
   TransactionBloc(
     this.getAllTransactions,
     this.getTransaction,
@@ -28,12 +33,9 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     this.deleteTransaction,
   ) : super(TransactionLoading()) {
     on<GetAllTransactionsEvent>(_onGetAllTransactionsEvent);
-    on<GetTransactionEvent>(_onGetTransactionEvent);
     on<InsertTransactionEvent>(_onInsertTransactionEvent);
     on<UpdateTransactionEvent>(_onUpdateTransactionEvent);
     on<DeleteTransactionEvent>(_onDeleteTransactionEvent);
-
-    on<ChangeTransactionTypeEvent>(_onChangeTransactionTypeEvent);
   }
 
   Future<void> _onGetAllTransactionsEvent(
@@ -41,82 +43,57 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     Emitter<TransactionState> emit,
   ) async {
     emit(TransactionLoading());
+    _currentYear = event.year ?? _currentYear;
+    _currentMonth = event.month ?? _currentMonth;
+    _currentSearchQuery = event.searchQuery ?? _currentSearchQuery;
 
-    final result = await getAllTransactions.execute();
-
-    result.fold((failure) => emit(TransactionLoadError(failure.message)), (
-      transactions,
-    ) {
-      if (transactions.isEmpty) {
-        emit(TransactionEmpty());
-      } else {
-        emit(TransactionLoaded(transactions));
-      }
-    });
-  }
-
-  Future<void> _onGetTransactionEvent(
-    GetTransactionEvent event,
-    Emitter<TransactionState> emit,
-  ) async {
-    emit(TransactionLoading());
-
-    final result = await getTransaction.execute(event.id);
+    final result = await getAllTransactions.execute(
+      _currentYear, _currentMonth, _currentSearchQuery,
+    );
 
     result.fold(
       (failure) => emit(TransactionLoadError(failure.message)),
-      (transaction) => emit(TransactionLoaded([transaction])),
+      (transactions) => emit(TransactionLoaded(transactions)),
     );
   }
-
+  
   Future<void> _onInsertTransactionEvent(
-    InsertTransactionEvent event,
-    Emitter<TransactionState> emit,
+    InsertTransactionEvent event, Emitter<TransactionState> emit,
   ) async {
-    emit(TransactionLoading());
 
     final result = await insertTransaction.execute(event.transaction);
-
     result.fold(
-      (failure) => emit(TransactionActionError(failure.message)),
-      (_) =>
-          emit(TransactionActionSuccess('Transaction inserted successfully')),
+      (failure) => emit(TransactionLoadError(failure.message)),
+      (_) {
+
+        add(GetAllTransactionsEvent());
+      },
     );
   }
 
   Future<void> _onUpdateTransactionEvent(
-    UpdateTransactionEvent event,
-    Emitter<TransactionState> emit,
+    UpdateTransactionEvent event, Emitter<TransactionState> emit,
   ) async {
-    emit(TransactionLoading());
-
     final result = await updateTransaction.execute(event.transaction);
-
     result.fold(
-      (failure) => emit(TransactionActionError(failure.message)),
-      (_) => emit(TransactionActionSuccess('Transaction updated successfully')),
+      (failure) => emit(TransactionLoadError(failure.message)),
+      (_) {
+
+        add(GetAllTransactionsEvent());
+      },
     );
   }
 
   Future<void> _onDeleteTransactionEvent(
-    DeleteTransactionEvent event,
-    Emitter<TransactionState> emit,
+    DeleteTransactionEvent event, Emitter<TransactionState> emit,
   ) async {
-    emit(TransactionLoading());
-
     final result = await deleteTransaction.execute(event.id);
-
     result.fold(
-      (failure) => emit(TransactionActionError(failure.message)),
-      (_) => emit(TransactionActionSuccess('Transaction deleted successfully')),
+      (failure) => emit(TransactionLoadError(failure.message)),
+      (_) {
+ 
+        add(GetAllTransactionsEvent());
+      },
     );
-  }
-
-  Future<void> _onChangeTransactionTypeEvent(
-    ChangeTransactionTypeEvent event,
-    Emitter<TransactionState> emit,
-  ) async {
-    emit(TransactionTypeChanged(event.type));
-    
   }
 }

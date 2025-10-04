@@ -39,7 +39,7 @@ class TransactionModel extends TransactionEntity {
   /// 🔁 To Drift Companion (for insert/update)
   TransactionsCompanion toCompanion({bool isInsert = false}) {
     return TransactionsCompanion(
-      id: isInsert ? const Value.absent() : Value(id),
+      id: isInsert ? const Value.absent() : Value(id!),
       userId: Value(userId),
       categoryId: Value(categoryId),
       savingsId: Value(savingsId),

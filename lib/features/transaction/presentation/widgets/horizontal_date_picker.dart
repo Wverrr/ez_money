@@ -1,33 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_colors.dart';
 
 class HorizontalDatePicker extends StatefulWidget {
-  const HorizontalDatePicker({super.key});
+  final DateTime initialDate;
+  final Function(DateTime) onDateChanged;
+
+  const HorizontalDatePicker({
+    super.key,
+    required this.initialDate,
+    required this.onDateChanged,
+  });
 
   @override
   State<HorizontalDatePicker> createState() => _HorizontalDatePickerState();
 }
 
 class _HorizontalDatePickerState extends State<HorizontalDatePicker> {
-  DateTime _selectedDate = DateTime.now();
   final ScrollController _scrollController = ScrollController();
   final List<DateTime> _dates = List.generate(
     61,
-    (index) => DateTime.now()
-        .subtract(const Duration(days: 30))
-        .add(Duration(days: index)),
+    (index) =>
+        DateTime.now().subtract(const Duration(days: 30)).add(Duration(days: index)),
   );
 
   @override
   void initState() {
     super.initState();
-    initializeDateFormatting('id_ID', null);
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      _scrollToToday();
+      if (_scrollController.hasClients) {
+        _scrollToToday();
+      }
     });
   }
 
@@ -54,15 +59,15 @@ class _HorizontalDatePickerState extends State<HorizontalDatePicker> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Tanggal Lainnya',
+            const Text(
+              'Tanggal',
               style: TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              DateFormat.MMMM('id_ID').format(_selectedDate),
+              DateFormat.yMMMM('id_ID').format(widget.initialDate),
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 color: AppColors.textSecondary,
@@ -79,7 +84,7 @@ class _HorizontalDatePickerState extends State<HorizontalDatePicker> {
             itemCount: _dates.length,
             itemBuilder: (context, index) {
               final date = _dates[index];
-              final isSelected = _isSameDay(_selectedDate, date);
+              final isSelected = _isSameDay(widget.initialDate, date);
               return _buildDateItem(date, isSelected);
             },
           ),
@@ -98,7 +103,7 @@ class _HorizontalDatePickerState extends State<HorizontalDatePicker> {
     final isToday = _isSameDay(date, DateTime.now());
 
     return GestureDetector(
-      onTap: () => setState(() => _selectedDate = date),
+      onTap: () => widget.onDateChanged(date),
       child: Container(
         width: 70,
         margin: const EdgeInsets.symmetric(horizontal: 6),
@@ -129,13 +134,14 @@ class _HorizontalDatePickerState extends State<HorizontalDatePicker> {
             const SizedBox(height: 4),
             if (isToday)
               Container(
+                height: 14,
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: isSelected ? Colors.white : AppColors.secondary,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  'Today',
+                  'Hari Ini',
                   style: TextStyle(
                     fontSize: 8,
                     fontWeight: FontWeight.bold,

@@ -50,6 +50,15 @@ class TrainResponseEntity extends Equatable {
     required this.analysis,
   });
 
+  factory TrainResponseEntity.fromJson(Map<String, dynamic> json) {
+    return TrainResponseEntity(
+      message: json['message'] ?? '',
+      userId: json['user_id'] ?? 0,
+      r2Score: (json['r2_score'] ?? 0).toDouble(),
+      analysis: Map<String, dynamic>.from(json['analysis'] ?? {}),
+    );
+  }
+  
   @override
   List<Object?> get props => [message, userId, r2Score, analysis];
 }

@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../domain/usecases/get_category_by_type.dart';
 
 import '../../domain/entities/category_entity.dart';
 import '../../domain/usecases/delete_category.dart';
 import '../../domain/usecases/get_all_categories.dart';
 import '../../domain/usecases/get_category.dart';
+import '../../domain/usecases/get_category_by_type.dart';
 import '../../domain/usecases/insert_category.dart';
 import '../../domain/usecases/update_category.dart';
 

@@ -8,9 +8,10 @@ abstract class HomeEvent extends Equatable {
 }
 
 class LoadHomeEvent extends HomeEvent {
-  const LoadHomeEvent();
+  final int userId;
+  const LoadHomeEvent(this.userId);
 
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [userId];
 }

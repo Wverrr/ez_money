@@ -89,7 +89,8 @@ Future<void> init() async {
   getIt.registerFactory(
     () => HomeBloc(
       getIt<GetUser>(),
-      getIt<GetLastActiveUser>(),
+      getIt<GetAllTransactions>(),
+      // getIt<GetLastActiveUser>(),
     ),
   );
 
@@ -297,6 +298,7 @@ Future<void> init() async {
   getIt.registerFactory(
     () => BoardingBloc(
       getIt<InsertUser>(),
+      getIt<SharedPreferences>(),
     ),
   );
 

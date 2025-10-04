@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../home/presentation/bloc/home_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
@@ -29,7 +30,9 @@ class _SplashPageState extends State<SplashPage> {
         if (state is SplashGoToOnboarding) {
           context.pushReplacementNamed('boarding');
         } else if (state is SplashGoToHome) {
+          context.read<HomeBloc>().add(LoadHomeEvent(state.userId));
           context.pushReplacementNamed('home');
+
         }
       },
       child: const Scaffold(body: Center(child: CircularProgressIndicator())),
