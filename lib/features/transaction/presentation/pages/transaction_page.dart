@@ -70,7 +70,7 @@ class _TransactionPageState extends State<TransactionPage> {
                     itemCount: state.transactions.length,
                     itemBuilder: (context, index) {
                       return TransactionListTile(
-                        transaction: state.transactions[index],
+                        transactions: state.transactions,
                       );
                     },
                     separatorBuilder: (context, index) =>
